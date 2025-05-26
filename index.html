@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Product Catalog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0px;
+            background-color: #e3f2fd;
+        }
+        
+        header {
+            background-color: #022f71;
+            color: white;
+            margin: 0px;
+            padding: 35px;
+            position: relative;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 50px;
+            text-align: center;
+        }
+        
+        .container {
+            padding: 30px;
+        }
+        
+        h2 {
+            color: #444;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 5px;
+            font-size: 28px;
+        }
+        
+        .category {
+            margin-bottom: 40px;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .product-card {
+            border: 1px solid black;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            margin: 10px;
+        }
+        
+        .product-card:hover {
+            transform: scale(1.02);
+            /* ✅ Slight zoom on hover */
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+            /* Optional glow */
+        }
+        
+        .product-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+        
+        .product-card h3 {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        
+        .price {
+            font-size: 20px;
+        }
+        
+        .mrp {
+            text-decoration: line-through;
+            color: #888;
+            font-size: 20px;
+        }
+        
+        .discount {
+            color: red;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .final-price {
+            font-size: 20px;
+            color: green;
+            margin: 5px 0;
+        }
+        
+        button {
+            background-color: black;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #3f84b9;
+        }
+        /* Corrected styles for cart icon on top right */
+        
+        .cart-icon-container {
+            position: absolute;
+            top: 20px;
+            /* Aligns with the floating cart top position */
+            right: 15px;
+            /* Adjust this value to position it relative to the floating cart */
+            color: white;
+            z-index: 110;
+            /* Ensure it's above other elements */
+            display: flex;
+            /* Allows alignment of icon and count */
+            align-items: center;
+            /* Vertically centers icon and count */
+            gap: 5px;
+            /* Spacing between icon and count */
+        }
+        
+        .cart-icon-container a {
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+        
+        .cart-icon-container a:hover #cart-count {
+            background-color: #d18006;
+            transition: background-color 0.3s;
+        }
+        
+        .cart-wrapper {
+            position: fixed;
+            /* or absolute if inside a relative parent */
+            top: 10px;
+            right: 15px;
+            z-index: 1000;
+            /* ensures it stays on top */
+        }
+        
+        .cart-emoji {
+            font-size: 55px;
+            position: relative;
+        }
+        
+        #cart-count {
+            background-color: rgb(255, 6, 6);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 20px;
+            vertical-align: super;
+            margin-left: -5px;
+            /* Pulls the count closer to the emoji */
+            line-height: 1;
+            /* Helps center text in small circle */
+            min-width: 12px;
+            /* Ensures minimum size for 0 or single digit */
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Product Catalog</h1>
+        <div class="cart-icon-container">
+            <a href="cart.html">
+                <span class="cart-emoji">🛒</span>
+                <span id="cart-count">0</span>
+            </a>
+        </div>
+
+    </header>
+
+    <div class="container" id="product-container"></div>
+    <script>
+        console.log("1. Script is running."); // Debugging marker 1
+
+        const productData = {
+            Makeup: [{
+                name: "Essence Mascara Lash Princess",
+                mrp: 259,
+                discount: 10.48,
+                price: 231.85,
+                img: "mascara.webp"
+            }, {
+                name: "Eyeshadow Palette with Mirror",
+                mrp: 146,
+                discount: 18.19,
+                price: 119.44,
+                img: "eye-shadow.webp"
+            }, {
+                name: "Powder Canister",
+                mrp: 199,
+                discount: 9.84,
+                price: 179.10,
+                img: "powder-canister.webp"
+            }, {
+                name: "Red Lipstick",
+                mrp: 100,
+                discount: 12.16,
+                price: 88.84,
+                img: "thumbnail.webp"
+            }, {
+                name: "Red Nail Polish",
+                mrp: 50,
+                discount: 11.44,
+                price: 44.28,
+                img: "red-nail-polish.webp"
+            }],
+            Fragrances: [{
+                name: "Calvin Klein CK One",
+                mrp: 689,
+                discount: 4.89,
+                price: 655.30,
+                img: "calvin-klein.webp"
+            }, {
+                name: "Chanel Coco Noir Eau De",
+                mrp: 550,
+                discount: 16.51,
+                price: 459.20,
+                img: "chanel.webp"
+            }, {
+                name: "Dior Adore",
+                mrp: 18999,
+                discount: 37,
+                price: 11899,
+                img: "dior.webp"
+            }, {
+                name: "Dolce Shine Eau de",
+                mrp: 6650,
+                discount: 15,
+                price: 5652,
+                img: "dolce-shine.webp"
+            }, {
+                name: "Gucci Bloom Eau de",
+                mrp: 12100,
+                discount: 25,
+                price: 9075,
+                img: "gucci-bloom.webp"
+            }]
+        };
+
+        const cart = JSON.parse(localStorage.getItem("cart")) || {};
+
+        function renderProducts() {
+            console.log("3. renderProducts function called."); // Debugging marker 3
+            const container = document.getElementById("product-container");
+
+            if (!container) {
+                console.error("ERROR: 'product-container' element not found! Products cannot be displayed.");
+                return;
+            }
+
+            console.log("4. 'product-container' element found."); // Debugging marker 4
+            container.innerHTML = "";
+
+            for (const category in productData) {
+                console.log(`5. Processing category: ${category}`); // Debugging marker 5
+
+                if (productData[category].length === 0) {
+                    console.warn(`Category '${category}' has no products defined.`);
+                    continue;
+                }
+
+                const section = document.createElement("div");
+                section.className = "category";
+
+                const heading = document.createElement("h2");
+                heading.textContent = category;
+                section.appendChild(heading);
+
+                const grid = document.createElement("div");
+                grid.className = "product-grid";
+
+                productData[category].forEach(product => {
+                    const card = document.createElement("div");
+                    card.className = "product-card";
+
+                    card.innerHTML = `
+                    <img src="${product.img}" alt="${product.name}" />
+                    <h3>${product.name}</h3>
+                    <div class="price">
+                        MRP: <span class="mrp">₹${product.mrp}</span><br/>
+                        Discount: <span class="discount">${product.discount}%</span><br/>
+                        <span class="final-price">₹${product.price}</span>
+                    </div>
+                    <button onclick="addToCart('${product.name}')">Add to Cart</button>
+                `;
+
+                    grid.appendChild(card);
+                });
+
+                section.appendChild(grid);
+                container.appendChild(section);
+            }
+        }
+
+        function addToCart(productName) {
+            alert("Item added to cart");
+            cart[productName] = (cart[productName] || 0) + 1;
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            const count = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+            document.getElementById("cart-count").textContent = count;
+        }
+
+
+        // Run on page load
+        renderProducts();
+        updateCartCount();
+    </script>
+
+
+</body>
+
+</html>

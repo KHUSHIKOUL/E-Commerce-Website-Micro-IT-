@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Shopping Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 20px;
+        }
+        
+        header {
+            background-color: #022f71;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+        
+        .cart-container {
+            max-width: 800px;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
+        }
+        
+        .cart-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-right: 20px;
+        }
+        
+        .cart-item-details {
+            flex-grow: 1;
+        }
+        
+        .cart-item h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .price {
+            color: green;
+            font-weight: bold;
+        }
+        
+        .remove-btn {
+            background-color: #e53935;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .remove-btn:hover {
+            background-color: #b71c1c;
+        }
+        
+        .total-section {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .checkout-btn {
+            background-color: #0d47a1;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            float: right;
+        }
+        
+        .checkout-btn:hover {
+            background-color: #1565c0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>🛒 Your Shopping Cart</header>
+
+    <div class="cart-container" id="cart-container">
+        <!-- Cart items will be dynamically inserted here -->
+    </div>
+    <script>
+        const cartContainer = document.getElementById("cart-container");
+
+        const productData = {
+            "Essence Mascara Lash Princess": {
+                price: 231.85,
+                img: "mascara.webp"
+            },
+            "Eyeshadow Palette with Mirror": {
+                price: 119.44,
+                img: "eye-shadow.webp"
+            },
+            "Powder Canister": {
+                price: 179.10,
+                img: "powder-canister.webp"
+            },
+            "Red Lipstick": {
+                price: 88.84,
+                img: "thumbnail.webp"
+            },
+            "Red Nail Polish": {
+                price: 44.28,
+                img: "red-nail-polish.webp"
+            },
+            "Calvin Klein CK One": {
+                price: 655.30,
+                img: "calvin-klein.webp"
+            },
+            "Chanel Coco Noir Eau De": {
+                price: 459.20,
+                img: "chanel.webp"
+            },
+            "Dior Adore": {
+                price: 11899,
+                img: "dior.webp"
+            },
+            "Dolce Shine Eau de": {
+                price: 5652,
+                img: "dolce-shine.webp"
+            },
+            "Gucci Bloom Eau de": {
+                price: 9075,
+                img: "gucci-bloom.webp"
+            }
+        };
+
+        function getProductPriceByName(name) {
+            return productData[name] ? productData[name].price : 0;
+        }
+
+        function getProductImageByName(name) {
+            return productData[name] ? productData[name].img : "https://via.placeholder.com/100";
+        }
+
+
+        function loadCart() {
+            let cartItems = JSON.parse(localStorage.getItem("cart"));
+            cartContainer.innerHTML = "";
+
+            if (!cartItems || Object.keys(cartItems).length === 0) {
+                cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+                return;
+            }
+
+            let total = 0;
+
+            for (let name in cartItems) {
+                const quantity = cartItems[name];
+                const price = getProductPriceByName(name);
+                const img = getProductImageByName(name);
+                total += price * quantity;
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "cart-item";
+
+                itemDiv.innerHTML = `
+                <img src="${img}" alt="${name}">
+                <div class="cart-item-details">
+                    <h3>${name}</h3>
+                    <p>Quantity: ${quantity}</p>
+                    <p class="price">₹${(price * quantity).toFixed(2)}</p>
+                    <button class="remove-btn" onclick="removeItem('${name}')">Remove</button>
+                </div>
+            `;
+
+                cartContainer.appendChild(itemDiv);
+            }
+
+            const totalDiv = document.createElement("div");
+            totalDiv.className = "total-section";
+            totalDiv.innerHTML = `
+            Total: ₹${total.toFixed(2)}
+            <br><br>
+            <button class="checkout-btn">Proceed to Checkout</button>
+        `;
+
+            cartContainer.appendChild(totalDiv);
+        }
+
+        // Sample remove function
+        function removeItem(name) {
+            let cartItems = JSON.parse(localStorage.getItem("cart")) || {};
+            delete cartItems[name];
+            localStorage.setItem("cart", JSON.stringify(cartItems));
+            loadCart();
+        }
+
+        loadCart();
+    </script>
+
+</body>
+
+</html>
